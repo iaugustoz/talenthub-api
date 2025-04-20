@@ -3,9 +3,8 @@ package com.iaugusto.talenthub.controller;
 import com.iaugusto.talenthub.controller.docs.CandidateControllerDocs;
 import com.iaugusto.talenthub.model.dto.CandidateDTO;
 import com.iaugusto.talenthub.model.entities.Candidate;
-import com.iaugusto.talenthub.repository.CandidateRepository;
+import com.iaugusto.talenthub.service.CandidateService;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,20 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/candidate")
 public class CandidateController implements CandidateControllerDocs {
 
-    private final CandidateRepository candidateRepository;
+    private final CandidateService candidateService;
 
-    private final ModelMapper modelMapper;
-
-    public CandidateController(CandidateRepository candidateRepository, ModelMapper modelMapper) {
-        this.candidateRepository = candidateRepository;
-        this.modelMapper = modelMapper;
+    public CandidateController(CandidateService service) {
+        this.candidateService = service;
     }
 
     @PostMapping("/")
     public ResponseEntity<Candidate> registerUser(@Valid @RequestBody CandidateDTO dto) {
-        Candidate newCandidate = modelMapper.map(dto, Candidate.class);
-
-        this.candidateRepository.save(newCandidate);
+        Candidate newCandidate = candidateService.createUser(dto);
 
         return ResponseEntity.status(201).body(newCandidate);
     }
