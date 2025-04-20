@@ -25,11 +25,23 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> argumentNotValid(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiError> argumentNotValidException(MethodArgumentNotValidException ex) {
         ApiError apiError = ApiError.builder()
                 .timestamp(LocalDateTime.now())
-                .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                .code(HttpStatus.BAD_REQUEST.value())
+                .status(HttpStatus.BAD_REQUEST.name())
+                .errors(List.of(ex.getMessage()))
+                .build();
+
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ExistingUserException.class)
+    public ResponseEntity<ApiError> userExistsException(ExistingUserException ex) {
+        ApiError apiError = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .code(HttpStatus.BAD_REQUEST.value())
+                .status(HttpStatus.BAD_REQUEST.name())
                 .errors(List.of(ex.getMessage()))
                 .build();
 
