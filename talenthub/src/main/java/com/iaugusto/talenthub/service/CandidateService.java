@@ -1,5 +1,6 @@
 package com.iaugusto.talenthub.service;
 
+import com.iaugusto.talenthub.exceptions.ExistingUserException;
 import com.iaugusto.talenthub.model.dto.CandidateDTO;
 import com.iaugusto.talenthub.model.entities.Candidate;
 import com.iaugusto.talenthub.repository.CandidateRepository;
@@ -19,6 +20,11 @@ public class CandidateService {
     }
 
     public Candidate createUser(CandidateDTO dto) {
+        this.candidateRepository.findByUsernameOrEmail(dto.username(), dto.email())
+                .ifPresent((candidate -> {
+                    throw new ExistingUserException();
+                }));
+
         Candidate candidate =  new Candidate();
         BeanUtils.copyProperties(dto, candidate, "id", "createdAt");
 
